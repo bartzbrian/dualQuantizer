@@ -37,7 +37,7 @@ void setup() {
   populateLookup();
   updateScale();
 }
-
+//inits lookup table with semitone dac vals
 void populateLookup(){
   int pasteVal=0;
   for(int i=0;i<5;i++){
@@ -47,7 +47,7 @@ void populateLookup(){
     }  
   }
 }
-
+//updates the states of the 12 switches that create scale
 int updateScale(){
   int on=0;
   for(int i=0;i<12;i++){
@@ -62,7 +62,7 @@ int updateScale(){
 }
 
 void loop() {
-  
+  //adjusts 10bit input to 12bit out
   inOne = analogRead(A1)*4;
   inTwo = analogRead(A0)*4;
   
@@ -70,16 +70,16 @@ void loop() {
   currDiffTwo=0;
   outputDiffOne=5000;
   outputDiffTwo=5000;
-  
+  //if there is at least one note in the scale
   if(updateScale()){
     for(int j=0;j<12;j++){
-      
+      //if this iteration's semitone is in the selected scale
       if (scaleMap[j][1]){
-        
+        //iterated through the five octave outputs, checking for minimal difference (i.e. quantization targets)
         for(int i=0;i<5;i++){
           currDiffOne = abs(inOne-lookup[j][i]);
           currDiffTwo = abs(inTwo-lookup[j][i]);
-          
+          //if a new minimum difference is found, set the outputs to it
           if (currDiffOne<outputDiffOne){
             outputDiffOne=currDiffOne;
             outputOne=lookup[j][i];  
@@ -93,8 +93,8 @@ void loop() {
         }
       }
     }
-  } else {outputOne=0;outputTwo=0;}
-  
+  } else {outputOne=0;outputTwo=0;}//output 0V if no notes in scale
+  //output the voltages
   dacOne.setVoltage(outputOne,false);
   dacTwo.setVoltage(outputTwo,false);
 }
